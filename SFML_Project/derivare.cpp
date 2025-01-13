@@ -138,7 +138,7 @@ int main() {
     int maxHorizontalLength;
     int v[2] = { 0 };
 
-    RenderWindow window(VideoMode(1300, 1300), "MA OMOR");
+    RenderWindow window(VideoMode(1300, 1300), "DERIVARE");
     Vector2i centerWindow((VideoMode::getDesktopMode().width / 2) - 445, (VideoMode::getDesktopMode().height / 2) - 480);
     window.setPosition(centerWindow);
     window.setKeyRepeatEnabled(true);
