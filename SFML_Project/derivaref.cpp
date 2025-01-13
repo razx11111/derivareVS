@@ -1,4 +1,4 @@
-﻿#include <stdio.h>
+#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <string>
@@ -1170,23 +1170,4 @@ char* stringToChar(string s) {
     }
     c[i] = '\0';
     return c;
-}
-
-int horizontalLevel(Nod* actual, Nod* finish, int nivel) {
-    if (actual == NULL || finish == NULL)
-        return 0;
-    if (actual == finish) return nivel;
-	horizontalLevel(actual->stg, finish, nivel - 1);
-    horizontalLevel(actual->drp, finish, nivel + 1);
-}
-
-void length(Nod* tata, int left, int right, int (&v)[2]) {
-    if (tata == NULL)
-        return;
-    if (left > v[0])
-		v[0] = left;
-    if(right > v[1])
-		v[1] = right;
-    length(tata->stg, left + 1, right - 1, v);
-    length(tata->drp, left - 1, right + 1, v);
 }
