@@ -42,5 +42,3 @@ void genereazaExpresie(Nod* nod, char* expresie, int* pozitie);
 char* genereazaExpresiaFinala(Nod* nod);
 char* stringToChar(std::string s);
 void genereazaExpresieS(struct Nod* nod, std::string& expresie, int prioritateParinte);
-int horizontalLevel(Nod* actual, Nod* finish, int nivel);
-void length(Nod* tata, int left, int right, int(&v)[2]);
