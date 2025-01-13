@@ -1,4 +1,4 @@
-﻿#include "TextBox.h"
+#include "TextBox.h"
 #include "SwitchButton.h"
 #include "JustText.h"
 #include "Node.h"
@@ -20,7 +20,7 @@ void iarParcurgere(Nod* bunic, Nod* tata, Nod* actual, RenderWindow& window, flo
         return;
     }
 
-    Node nod(Color::Black, 30, arial, Color::White, 30);
+    Node nod(Color::Black, 26, arial, Color::White, 30);
     nod.setText(nod.charToString(actual->info));
     nod.setNodePosition({ x_axis, y_axis });
     nod.drawTo(window);
