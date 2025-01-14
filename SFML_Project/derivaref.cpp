@@ -214,7 +214,25 @@ int verificaExpresie(const char* expresie) {
             potFiNumereNegative = 0;
         }
         else if (isalpha(expresie[i])) {
-            // ... restul codului pentru litere rămâne neschimbat ...
+            j = 0;
+            while (i < lungime && isalpha(expresie[i])) {
+                token[j++] = expresie[i++];
+            }
+            token[j] = '\0';
+            i--;
+
+            if (verificaFunctieTrigonometrica(token)) {
+                if (expresie[i + 1] != '(') {
+                    return 0;
+                }
+                potFiNumereNegative = 1; // Dupa functie (si paranteza ei) putem avea numar negativ
+            }
+            else if (strlen(token) > 1) {
+                return 0;
+            }
+
+            asteaptaOperand = 0;
+            potFiNumereNegative = 0;
             ultimulNumarEsteZero = 0;
         }
         else if (isdigit(expresie[i])) {
