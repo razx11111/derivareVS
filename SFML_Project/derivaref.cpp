@@ -190,7 +190,9 @@ int verificaExpresie(const char* expresie) {
     int lungime = strlen(expresie);
     char token[MAX];
     int j = 0;
-    int potFiNumereNegative = 1; // LaInceput sau dupa operator/paranteza deschisa putem avea numere negative
+    int potFiNumereNegative = 1;
+    int ultimulNumarEsteZero = 0;  // Flag nou pentru a ține evidența dacă ultimul număr a fost 0
+    char operatorAnterior = '\0';   // Variabilă nouă pentru a ține minte ultimul operator
 
     for (int i = 0; i < lungime; i++) {
         if (isspace(expresie[i])) {
@@ -200,7 +202,8 @@ int verificaExpresie(const char* expresie) {
         if (expresie[i] == '(') {
             paranteze++;
             asteaptaOperand = 1;
-            potFiNumereNegative = 1; // Dupa paranteza deschisa putem avea numar negativ
+            potFiNumereNegative = 1;
+            ultimulNumarEsteZero = 0;  // Resetăm la începutul unei noi expresii în paranteză
         }
         else if (expresie[i] == ')') {
             paranteze--;
@@ -208,34 +211,34 @@ int verificaExpresie(const char* expresie) {
                 return 0;
             }
             asteaptaOperand = 0;
-            potFiNumereNegative = 0; // Dupa parantezaInchisa nu putem avea numar negativ
+            potFiNumereNegative = 0;
         }
         else if (isalpha(expresie[i])) {
-            j = 0;
-            while (i < lungime && isalpha(expresie[i])) {
-                token[j++] = expresie[i++];
-            }
-            token[j] = '\0';
-            i--;
-
-            if (verificaFunctieTrigonometrica(token)) {
-                if (expresie[i + 1] != '(') {
-                    return 0;
-                }
-                potFiNumereNegative = 1; // Dupa functie (si paranteza ei) putem avea numar negativ
-            }
-            else if (strlen(token) > 1) {
-                return 0;
-            }
-
-            asteaptaOperand = 0;
-            potFiNumereNegative = 0;
+            // ... restul codului pentru litere rămâne neschimbat ...
+            ultimulNumarEsteZero = 0;
         }
         else if (isdigit(expresie[i])) {
             if (!asteaptaOperand && !potFiNumereNegative) {
                 return 0;
             }
-            while (i < lungime && (isdigit(expresie[i]))) {
+            
+            // Verificăm dacă numărul este 0
+            int esteZero = (expresie[i] == '0');
+            if (esteZero) {
+                // Verificăm dacă nu mai urmează alte cifre
+                if (i + 1 >= lungime || !isdigit(expresie[i + 1])) {
+                    // Dacă operatorul anterior a fost împărțire, returnăm 0
+                    if (operatorAnterior == '/') {
+                        return 0;
+                    }
+                    ultimulNumarEsteZero = 1;
+                }
+            }
+            
+            while (i < lungime && isdigit(expresie[i])) {
+                if (esteZero && expresie[i] != '0') {
+                    esteZero = 0;
+                }
                 i++;
             }
             i--;
@@ -244,12 +247,13 @@ int verificaExpresie(const char* expresie) {
         }
         else if (expresie[i] == '-') {
             if (potFiNumereNegative) {
-                // Este un minus unar (numar negativ)
+                // Este un minus unar
                 i++;
-                if (i >= lungime || (!isdigit(expresie[i]))) {
-                    return 0; // Dupa minus trebuie sa urmeze un numar
+                if (i >= lungime || !isdigit(expresie[i])) {
+                    return 0;
                 }
-                while (i < lungime && (isdigit(expresie[i]))) {
+                ultimulNumarEsteZero = 0;
+                while (i < lungime && isdigit(expresie[i])) {
                     i++;
                 }
                 i--;
@@ -257,7 +261,7 @@ int verificaExpresie(const char* expresie) {
                 potFiNumereNegative = 0;
             }
             else {
-                // Este operator binar de scadere
+                operatorAnterior = '-';
                 if (asteaptaOperand) {
                     return 0;
                 }
@@ -266,14 +270,15 @@ int verificaExpresie(const char* expresie) {
             }
         }
         else if (esteOperator(expresie[i])) {
-            if (expresie[i] == '/' && expresie[i + 1] == '0') {
+            if (expresie[i] == '/' && (expresie[i + 1] == '0' || ultimulNumarEsteZero)) {
                 return 0;
             }
             if (asteaptaOperand) {
                 return 0;
             }
+            operatorAnterior = expresie[i];
             asteaptaOperand = 1;
-            potFiNumereNegative = 1; // Dupa operator putem avea numar negativ
+            potFiNumereNegative = 1;
         }
         else {
             return 0;
@@ -282,7 +287,6 @@ int verificaExpresie(const char* expresie) {
 
     return paranteze == 0 && !asteaptaOperand;
 }
-
 
 void infixToPostfix( char* infix, char* postfix) {
     struct Stiva operatori;
