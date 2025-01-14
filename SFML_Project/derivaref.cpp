@@ -476,9 +476,15 @@ Nod* prelucreazaSir(Nod* nod) {
             return temp;
         }
     }
-
     //Puterea la 1
     if (strcmp(nod->info, "^") == 0) {
+        if (nod->stg != NULL && strcmp(nod->stg->info, "1") == 0) {
+            stergeArbore(nod->drp);  // Eliberam exponentul
+            strcpy(nod->info, "1");   // Transformăm nodul curent în "1"
+            nod->stg = NULL;
+            nod->drp = NULL;
+                return nod;
+            }
         if (nod->drp != NULL && strcmp(nod->drp->info, "1") == 0) {
             Nod* temp = nod->stg;
             free(nod->drp);
