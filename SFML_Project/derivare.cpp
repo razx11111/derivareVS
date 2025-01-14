@@ -125,7 +125,7 @@ void parcurgere(Nod* radacina, Vector2f coordonate, Font& arial, RenderWindow& w
 
 int main() {
     char infixExpr[100];
-    char postfix[] = "";
+    char postfix[100];
     char* expresiefinala = nullptr;
     int functieArboreSwitch = -1;
     bool wasPressedOnce = false;
@@ -138,8 +138,8 @@ int main() {
     int maxHorizontalLength;
     int v[2] = { 0 };
 
-    RenderWindow window(VideoMode(1300, 1300), "DERIVARE");
-    Vector2i centerWindow((VideoMode::getDesktopMode().width / 2) - 445, (VideoMode::getDesktopMode().height / 2) - 480);
+    RenderWindow window(VideoMode(1800, 1200), "DERIVARE");
+    Vector2i centerWindow((VideoMode::getDesktopMode().width / 2) - 900, (VideoMode::getDesktopMode().height / 2) - 600);
     window.setPosition(centerWindow);
     window.setKeyRepeatEnabled(true);
 
@@ -148,18 +148,18 @@ int main() {
     
     TextBox textbox1(false);
     textbox1.setFont(arial);
-    textbox1.setPosition({ 550, 100 });
+    textbox1.setPosition({ 695, 100 });
 
-    JustText functie({445, 40}, Color::Red, 30, arial), functieDerivata({445, 40}, Color::Blue, 30, arial);
+    JustText functie({100, 40}, Color::Red, 30, arial), functieDerivata({100, 40}, Color::Blue, 30, arial);
 
     SwitchButton button1({ 200, 50 }, Color::Red, Color::White, 30);
 	button1.setFont(arial);
-	button1.setButtonPostionion({ 445, 200 });
+	button1.setButtonPostionion({ 695, 200 });
 	button1.assignText("Deriveaza");
 
     SwitchButton button2({ 200, 50 }, Color::Blue, Color::White, 30);
     button2.setFont(arial);
-    button2.setButtonPostionion({ 655, 200 });
+    button2.setButtonPostionion({ 905, 200 });
     button2.assignText("f''(x)");
 
     while (window.isOpen())
@@ -188,8 +188,8 @@ int main() {
             }
             if (event.type == Event::MouseButtonPressed) {
                 if (button1.isMouseOver(window)) {
-					button1.setButtonPostionion({ 445, 100 });
-					button2.setButtonPostionion({ 655, 100 });
+					button1.setButtonPostionion({ 695, 100 });
+					button2.setButtonPostionion({ 905, 100 });
                     wasPressedOnce = true;
                     button1.wasPressed();
 					if (functieArboreSwitch % 2 == 0) 
@@ -247,13 +247,13 @@ int main() {
         if (functieArboreSwitch % 2 == 0) {
             functie.drawTo(window);
 			int maxDepth = calculateMaxDepth(arbore); 
-			iarParcurgere(NULL, NULL, arbore, window, 625, 200, arial, true);
+			iarParcurgere(NULL, NULL, arbore, window, 900, 200, arial, true);
         //    parcurgere(arbore, { 625, 300 }, arial, window, 35, 70, 0, maxDepth);  
         }
         else if (functieArboreSwitch != -1){
             functieDerivata.drawTo(window);
             int maxDepth = calculateMaxDepth(arboreDerivat);
-			iarParcurgere(NULL, NULL, arboreDerivat, window, 625, 200, arial, true);
+			iarParcurgere(NULL, NULL, arboreDerivat, window, 900, 200, arial, true);
         //    parcurgere(arboreDerivat, { 625, 300 }, arial, window, 35, 70, 0, maxDepth);
         }
         
