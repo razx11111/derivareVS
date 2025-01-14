@@ -51,7 +51,7 @@ Nod* creareNod(const char* valoare) {
 
 int verificaFunctieTrigonometrica(const char* postfix) {
     const char* functiiTrigonometrice[] = { "sin","cos","tg","ctg","arcsin","arccos","arctg","arcctg","sqrt","ln" };
-    int numarFunctii = sizeof(functiiTrigonometrice) / sizeof(functiiTrigonometrice[0]);
+    int numarFunctii = sizeof(functiiTrigonometrice) / sizeof(functiiTrigonometrice[0]);// Vedem lungimea vectorului
     for (int i = 0;i < numarFunctii;i++) {
         if (strcmp(postfix, functiiTrigonometrice[i]) == 0)
             return 1;
@@ -87,9 +87,9 @@ struct Nod* creareArborePostfix(char* postfix) {
     struct Stiva stiva;
     initStiva(&stiva);
 
-    char buffer[10];
-    int j = 0;
-    int asteptamNumar = 1; // Flag pentru a ști daca urmatorul '-' este parte dintr-un numar
+    char buffer[100]; 
+    int j = 0; 
+    int asteptamNumar = 1; // Flag pentru a sti daca urmatorul '-' este parte dintr-un numar
 
     for (int i = 0; postfix[i] != '\0'; i++) {
         if (isspace(postfix[i])) {
@@ -185,8 +185,8 @@ void Postordine(struct Nod* a) {
 }
 
 int verificaExpresie(const char* expresie) {
-    int paranteze = 0;
-    int asteaptaOperand = 1;
+    int paranteze = 0;        
+    int asteaptaOperand = 1;  
     int lungime = strlen(expresie);
     char token[MAX];
     int j = 0;
@@ -222,7 +222,7 @@ int verificaExpresie(const char* expresie) {
                 if (expresie[i + 1] != '(') {
                     return 0;
                 }
-                potFiNumereNegative = 1; // Dupa funcție (și paranteza ei) putem avea numar negativ
+                potFiNumereNegative = 1; // Dupa functie (si paranteza ei) putem avea numar negativ
             }
             else if (strlen(token) > 1) {
                 return 0;
@@ -231,11 +231,11 @@ int verificaExpresie(const char* expresie) {
             asteaptaOperand = 0;
             potFiNumereNegative = 0;
         }
-        else if (isdigit(expresie[i]) || expresie[i] == '.') {
+        else if (isdigit(expresie[i])) {
             if (!asteaptaOperand && !potFiNumereNegative) {
                 return 0;
             }
-            while (i < lungime && (isdigit(expresie[i]) || expresie[i] == '.')) {
+            while (i < lungime && (isdigit(expresie[i]))) {
                 i++;
             }
             i--;
@@ -246,10 +246,10 @@ int verificaExpresie(const char* expresie) {
             if (potFiNumereNegative) {
                 // Este un minus unar (numar negativ)
                 i++;
-                if (i >= lungime || (!isdigit(expresie[i]) && expresie[i] != '.')) {
+                if (i >= lungime || (!isdigit(expresie[i]))) {
                     return 0; // Dupa minus trebuie sa urmeze un numar
                 }
-                while (i < lungime && (isdigit(expresie[i]) || expresie[i] == '.')) {
+                while (i < lungime && (isdigit(expresie[i]))) {
                     i++;
                 }
                 i--;
@@ -284,7 +284,7 @@ int verificaExpresie(const char* expresie) {
 }
 
 
-void infixToPostfix(char* infix, char* postfix) {
+void infixToPostfix( char* infix, char* postfix) {
     struct Stiva operatori;
     initStiva(&operatori);
 
@@ -359,9 +359,7 @@ void infixToPostfix(char* infix, char* postfix) {
 void copiazaSir(Nod* nod, char* sir) {
     if (nod != NULL) {
         copiazaSir(nod->stg, sir);
-
         strcat(sir, nod->info);
-
         copiazaSir(nod->drp, sir);
     }
 }
@@ -382,20 +380,19 @@ Nod* prelucreazaSir(Nod* nod) {
 
     if (strcmp(nod->info, "-") == 0) {
         if (nod->stg != NULL && strcmp(nod->stg->info, "0") == 0) {
-            //In loc sa pastram "0-expresie", transformamIn "-expresie"
+            //pastram "-expresie"
             Nod* temp = nod->drp;
             free(nod->stg);  // Eliberam nodul cu "0"
             free(nod);
-
+            
             // Cream un nou nod pentru minus
             Nod* nouNod = (Nod*)malloc(sizeof(Nod));
             strcpy(nouNod->info, "-");
-            nouNod->stg = NULL;  // Operatorul unar minus nu are copil stâng
+            nouNod->stg = NULL;  // Operatorul unar minus nu are copil stang
             nouNod->drp = temp;  // Copilul drept este expresia originala
             return nouNod;
         }
-
-        // Restul cazurilor pentru scadere ramân neschimbate
+        //scaderea cu 0
         if (nod->drp != NULL && strcmp(nod->drp->info, "0") == 0) {
             Nod* temp = nod->stg;
             free(nod->drp);
@@ -404,16 +401,16 @@ Nod* prelucreazaSir(Nod* nod) {
         }
     }
 
-    // Cazul 1: Adunarea cu 0
+    //Adunarea cu 0
     if (strcmp(nod->info, "+") == 0) {
-        // Daca operandul stâng este 0, returnam operandul drept
+        // Daca operandul stang este 0, returnam operandul drept
         if (nod->stg != NULL && strcmp(nod->stg->info, "0") == 0) {
             Nod* temp = nod->drp;
             free(nod->stg);
             free(nod);
             return temp;
         }
-        // Daca operandul drept este 0, returnam operandul stâng
+        // Daca operandul drept este 0, returnam operandul stang
         if (nod->drp != NULL && strcmp(nod->drp->info, "0") == 0) {
             Nod* temp = nod->stg;
             free(nod->drp);
@@ -421,19 +418,7 @@ Nod* prelucreazaSir(Nod* nod) {
             return temp;
         }
     }
-
-    // Cazul 2: Scaderea cu 0
-    if (strcmp(nod->info, "-") == 0) {
-        // Daca operandul drept este 0, returnam operandul stâng
-        if (nod->drp != NULL && strcmp(nod->drp->info, "0") == 0) {
-            Nod* temp = nod->stg;
-            free(nod->drp);
-            free(nod);
-            return temp;
-        }
-    }
-
-    // Cazul 3:Inmultirea cu 0
+    //Inmultirea cu 0
     if (strcmp(nod->info, "*") == 0) {
         // Daca unul din operanzi este 0, returnam 0
         if ((nod->stg != NULL && strcmp(nod->stg->info, "0") == 0) ||
@@ -460,7 +445,7 @@ Nod* prelucreazaSir(Nod* nod) {
         }
     }
 
-    // Cazul 4:Impartirea cu 1
+    //Impartirea cu 1
     if (strcmp(nod->info, "/") == 0) {
         if (nod->drp != NULL && strcmp(nod->drp->info, "1") == 0) {
             Nod* temp = nod->stg;
@@ -470,7 +455,7 @@ Nod* prelucreazaSir(Nod* nod) {
         }
     }
 
-    // Cazul 5: Puterea la 1
+    //Puterea la 1
     if (strcmp(nod->info, "^") == 0) {
         if (nod->drp != NULL && strcmp(nod->drp->info, "1") == 0) {
             Nod* temp = nod->stg;
@@ -507,18 +492,6 @@ Nod* derivare(struct Nod* nod);
 
 int esteVariabila(const char* info) {
     return (strcmp(info, "x") == 0);
-}
-
-bool alfanumeric(Nod* tata)
-{
-    int yuh = 0;
-    if (strchr(tata->stg->info, '*') != NULL || strchr(tata->stg->info, '/') != NULL || strchr(tata->stg->info, '^') != NULL || strstr(tata->stg->info, "sqrt") != NULL)
-        yuh++;
-    if (strchr(tata->drp->info, '*') != NULL || strchr(tata->drp->info, '/') != NULL || strchr(tata->drp->info, '^') != NULL || strstr(tata->drp->info, "sqrt") != NULL)
-        yuh++;
-    if (yuh > 0)
-        return false;
-    return true;
 }
 
 Nod* constant(Nod* functie)
@@ -558,7 +531,7 @@ Nod* inmultire(struct Nod* nod) {
     // Cream un nod pentru suma derivatelor
     Nod* rezultat = creareNod("+");
 
-    // Derivam operandul stâng
+    // Derivam operandul stang
     Nod* derivataStanga = derivare(nod->stg); //f'
     Nod* operandDrept = copiazaNod(nod->drp); //g
 
@@ -585,40 +558,30 @@ Nod* inmultire(struct Nod* nod) {
 
 
 Nod* impartire(struct Nod* nod) {
-    // Cream un nod pentru rezultatul derivarii
     Nod* rezultat = creareNod("/");
 
-    // Numitorul (g^2)
     Nod* numitor = creareNod("^");
     numitor->stg = copiazaNod(nod->drp); // g
     numitor->drp = creareNod("2"); // 2
 
-    // Numaratorul (f' * g - f * g')
     Nod* numarator = creareNod("-");
-
-    // Derivam operandul stang (f)
     Nod* derivataStanga = derivare(nod->stg); // f'
     Nod* operandDrept = copiazaNod(nod->drp); // g
 
-    // Primul termen f' * g
     Nod* termen1 = creareNod("*");
     termen1->stg = derivataStanga;
     termen1->drp = operandDrept;
 
-    // Derivam operandul drept (g)
     Nod* derivataDreapta = derivare(nod->drp);//g'
     Nod* operandStang = copiazaNod(nod->stg); // f
 
-    // Al doilea termen f * g'
     Nod* termen2 = creareNod("*");
     termen2->stg = operandStang;
     termen2->drp = derivataDreapta;
 
-    // Adaugam cei doi termeni la numarator
     numarator->stg = termen1;
     numarator->drp = termen2;
 
-    // Adaugam numitorul si numaratorul la rezultat
     rezultat->stg = numarator;
     rezultat->drp = numitor;
 
@@ -647,7 +610,7 @@ Nod* exponent_x(Nod* nod)
 
     Nod* exponentNou = creareNod("n-1");
     n = n - 1;
-    _itoa(n, exponentNou->info, 10);  // Salvam n-1In nodul exponentului
+    _itoa(n, exponentNou->info, 10);  // Salvam n-1 in nodul exponentului
 
     putere->drp = exponentNou;
 
@@ -735,7 +698,7 @@ Nod* sin_x(Nod* functie) {
     rezultat->stg = cosinus;
     return rezultat;
 }
-//nu merge bine nush de ce
+
 Nod* cos_x(Nod* functie) {
     //-sin(x)*x'
     Nod* rezultat = creareNod("*");
@@ -801,6 +764,7 @@ Nod* ctg_x(Nod* functie)
 }
 Nod* arcsin_x(Nod* functie)
 {
+    //1/sqrt(1-u^2) * u'
     Nod* rezultat = creareNod("*");
     rezultat->drp = derivare(functie->drp);
 
@@ -825,6 +789,7 @@ Nod* arcsin_x(Nod* functie)
 
 Nod* arccos_x(Nod* functie)
 {
+    //-1/sqrt(1-u^2) * u'
     Nod* rezultat = creareNod("*");
     rezultat->drp = derivare(functie->drp);
 
@@ -890,68 +855,40 @@ Nod* arcctg_x(Nod* functie)
 }
 
 Nod* putere_generala(Nod* nod) {
-    // Verificam daca este cazul ln(x)^n
-    if (strcmp(nod->stg->info, "ln") == 0 && esteNumar(nod->drp->info) == 0) {
-        Nod* prod = creareNod("*");
-
-        // n
-        prod->stg = copiazaNod(nod->drp);
-
-        // ln(x)^(n-1)
-        Nod* putere = creareNod("^");
-        putere->stg = copiazaNod(nod->stg);
-        putere->stg->drp = copiazaNod(nod->stg->drp);  // x esteIn dreapta pentru ln
-
-        char buf[MAX];
-        snprintf(buf, MAX - 1, "%d", atoi(nod->drp->info) - 1);
-        putere->drp = creareNod(buf);
-
-        // 1/x
-        Nod* div = creareNod("/");
-        div->stg = creareNod("1");
-        div->drp = copiazaNod(nod->stg->drp);  // x din ln(x)
-
-        Nod* prod2 = creareNod("*");
-        prod2->stg = putere;
-        prod2->drp = div;
-
-        prod->drp = prod2;
-        return prod;
-    }
-
+    
     Nod* prod_final = creareNod("*");
     prod_final->stg = copiazaNod(nod);  // f(x)^g(x)
-
+    
     Nod* plus = creareNod("+");
-
+    
     // Primul termen: g(x) * f'(x)/f(x)
     Nod* prod1 = creareNod("*");
     prod1->stg = copiazaNod(nod->drp);  // g(x)
-
+    
     Nod* div = creareNod("/");
     div->stg = derivare(nod->stg);      // f'(x)
     div->drp = copiazaNod(nod->stg);    // f(x)
-
+    
     prod1->drp = div;
-
+    
     // Al doilea termen: g'(x) * ln(f(x))
     Nod* prod2 = creareNod("*");
     prod2->stg = derivare(nod->drp);    // g'(x)
-
+    
     Nod* ln = creareNod("ln");
     ln->drp = copiazaNod(nod->stg);     // ln(f(x))
     prod2->drp = ln;
-
+    
     plus->stg = prod1;
     plus->drp = prod2;
-
+    
     prod_final->drp = plus;
     return prod_final;
 }
 
 bool esteNumar(const char* str) {
     if (str == NULL) return false;
-
+    
     char* endptr;
     strtod(str, &endptr);
     return *endptr == '\0';
@@ -960,38 +897,33 @@ bool esteNumar(const char* str) {
 Nod* derivare(struct Nod* nod) {
     if (nod == NULL) return NULL;
 
-    // Operatori de baza (+, -)
     if (strcmp(nod->info, "+") == 0) {
-        return suma(nod); // derivata sumei este suma derivatelor
+        return suma(nod); 
     }
     if (strcmp(nod->info, "-") == 0) {
-        return scadere(nod); // derivata diferentei este diferenta derivatelor
+        return scadere(nod); 
     }
-
-    // Operator deInmultire (*)
+    
     if (strcmp(nod->info, "*") == 0) {
-        return inmultire(nod); // derivata produsului: f'g + fg'
+        return inmultire(nod); 
     }
 
-    // Operator deImpartire (/)
     if (strcmp(nod->info, "/") == 0) {
-        return impartire(nod); // derivataImpartirii: (f'g - fg')/g^2
+        return impartire(nod); 
     }
 
-    // Operator de putere (^)
-    // Operator de putere (^)
     if (strcmp(nod->info, "^") == 0) {
-        // Verificăm mai întâi cazurile speciale
-
-        // e^x -> e^x
+        // Verificam mai intai cazurile speciale
+    
+        // e^x
         if (strcmp(nod->stg->info, "e") == 0 && strcmp(nod->drp->info, "x") == 0) {
             return e_to_x(nod);
         }
-        // x^n unde n este număr
+        // x^n
         else if (strcmp(nod->stg->info, "x") == 0 && esteNumar(nod->drp->info)) {
             return exponent_x(nod);
         }
-        // a^x unde a este număr
+        // a^x
         else if (esteNumar(nod->stg->info) && strcmp(nod->drp->info, "x") == 0) {
             return a_to_x(nod);
         }
@@ -999,46 +931,46 @@ Nod* derivare(struct Nod* nod) {
         else {
             return putere_generala(nod);
         }
-    }
+}   
     // Functii trigonometrice
     if (strcmp(nod->info, "sin") == 0) {
-        return sin_x(nod); // d/dx(sin(x)) = cos(x)
+        return sin_x(nod); 
     }
     if (strcmp(nod->info, "cos") == 0) {
-        return cos_x(nod); // d/dx(cos(x)) = -sin(x)
+        return cos_x(nod); 
     }
     if (strcmp(nod->info, "tg") == 0) {
-        return tg_x(nod); // d/dx(tg(x)) = 1/cos^2(x)
+        return tg_x(nod); 
     }
     if (strcmp(nod->info, "ctg") == 0) {
-        return ctg_x(nod); // d/dx(ctg(x)) = -1/sin^2(x)
+        return ctg_x(nod);
     }
 
     // Functii trigonometrice inverse
     if (strcmp(nod->info, "arcsin") == 0) {
-        return arcsin_x(nod); // d/dx(arcsin(x)) = 1/sqrt(1-x^2)
+        return arcsin_x(nod);
     }
     if (strcmp(nod->info, "arccos") == 0) {
-        return arccos_x(nod); // d/dx(arccos(x)) = -1/sqrt(1-x^2)
+        return arccos_x(nod); 
     }
     if (strcmp(nod->info, "arctg") == 0) {
-        return arctg_x(nod); // d/dx(arctg(x)) = 1/(1+x^2)
+        return arctg_x(nod); 
     }
     if (strcmp(nod->info, "arcctg") == 0) {
-        return arcctg_x(nod); // d/dx(arcctg(x)) = -1/(1+x^2)
+        return arcctg_x(nod); 
     }
 
-    // Functii logaritmice și exponentiale
+    // Functi logaritmice
     if (strcmp(nod->info, "ln") == 0) {
-        return ln_x(nod); // d/dx(ln(x)) = 1/x
+        return ln_x(nod); 
     }
 
     // Functia radical
     if (strcmp(nod->info, "sqrt") == 0) {
-        return radical(nod); // d/dx(sqrt(x)) = 1/(2*sqrt(x))
+        return radical(nod); 
     }
 
-    // Variabila x și constante
+    // Variabila x si constante
     if (strcmp(nod->info, "x") == 0) {
         return x_noConstant(nod); // d/dx(x) = 1
     }
@@ -1049,95 +981,83 @@ Nod* derivare(struct Nod* nod) {
     return NULL;
 }
 
-int getPrioritate(const char* op) {
-    if (strcmp(op, "^") == 0) return 4;
-    if (strcmp(op, "*") == 0 || strcmp(op, "/") == 0) return 3;
-    if (strcmp(op, "+") == 0 || strcmp(op, "-") == 0) return 2;
-    return 1; // pentru funcții și operanzi
-}
-
-// Verifică dacă este funcție matematică
 int esteFunctie(const char* str) {
-    return strcmp(str, "sin") == 0 || strcmp(str, "cos") == 0 ||
-        strcmp(str, "tg") == 0 || strcmp(str, "ctg") == 0 ||
-        strcmp(str, "arcsin") == 0 || strcmp(str, "arccos") == 0 ||
-        strcmp(str, "arctg") == 0 || strcmp(str, "arcctg") == 0 ||
-        strcmp(str, "ln") == 0 || strcmp(str, "sqrt") == 0 ||
-        strcmp(str, "log") == 0;
+    return strcmp(str, "sin") == 0 || strcmp(str, "cos") == 0 || 
+           strcmp(str, "tg") == 0 || strcmp(str, "ctg") == 0 ||
+           strcmp(str, "arcsin") == 0 || strcmp(str, "arccos") == 0 ||
+           strcmp(str, "arctg") == 0 || strcmp(str, "arcctg") == 0 ||
+           strcmp(str, "ln") == 0 || strcmp(str, "sqrt") == 0 ||
+           strcmp(str, "log") == 0;
 }
 
-// Verifică dacă un operator necesită paranteze pentru operanzi
-bool necesitaParantezeOperand(const char* parinte, const char* copil, bool eDreapta) {
-    // Dacă copilul nu e operator, nu necesită paranteze
+bool necesitaParantezeOperand(char* parinte, char* copil, bool eDreapta) {
+    // Daca copilul nu e operator, nu necesita paranteze
     if (strchr("+-*/^", copil[0]) == NULL) return false;
-
-    int prioritateParinte = getPrioritate(parinte);
-    int prioritateCopil = getPrioritate(copil);
-
+    
+    int prioritateParinte = precedenta(parinte);
+    int prioritateCopil = precedenta(copil);
+    
     // Pentru exponentiere
     if (strcmp(parinte, "^") == 0) {
         if (eDreapta) return true;  // Mereu punem paranteze pentru exponentul complex
         return prioritateCopil < prioritateParinte;
     }
-
-    // Pentru înmulțire și împărțire
+    
+    // Pentru inmultire si impartire
     if (strcmp(parinte, "*") == 0 || strcmp(parinte, "/") == 0) {
         if (prioritateCopil < prioritateParinte) return true;
         if (eDreapta && strcmp(parinte, "/") == 0) return true;
         return false;
     }
-
-    // Pentru adunare și scădere
+    
+    // Pentru adunare si scadere
     if (prioritateCopil <= prioritateParinte) return true;
-
+    
     return false;
 }
 
 void genereazaExpresie(Nod* nod, char* expresie, int* pozitie) {
     if (nod == NULL) return;
-
-    // Tratăm funcțiile matematice
+    
+    // Tratam functiile matematice
     if (esteFunctie(nod->info)) {
         *pozitie += sprintf(expresie + *pozitie, "%s(", nod->info);
         genereazaExpresie(nod->drp, expresie, pozitie);
         *pozitie += sprintf(expresie + *pozitie, ")");
         return;
     }
-
+    
     bool esteOperator = strchr("+-*/^", nod->info[0]) != NULL;
-    bool necesitaParantezeStg = nod->stg && esteOperator &&
-        necesitaParantezeOperand(nod->info, nod->stg->info, false);
-    bool necesitaParantezeDrp = nod->drp && esteOperator &&
-        necesitaParantezeOperand(nod->info, nod->drp->info, true);
-
-    // Cazuri speciale pentru derivate complexe
+    bool necesitaParantezeStg = nod->stg && esteOperator && necesitaParantezeOperand(nod->info, nod->stg->info, false);
+    bool necesitaParantezeDrp = nod->drp && esteOperator && necesitaParantezeOperand(nod->info, nod->drp->info, true);
+    
+    // Cazuri pentru derivate complexe
     if (strcmp(nod->info, "*") == 0 || strcmp(nod->info, "+") == 0) {
-        // Verificăm dacă avem o expresie de tipul f(x)^g(x) * derivată
+        // Verificam expresie f(x)^g(x) * derivata
         if (nod->stg != NULL && strcmp(nod->stg->info, "^") == 0) {
             necesitaParantezeStg = true;
         }
-        // Verificăm dacă avem operații complexe în dreapta
+        // Verificam daca avem operatii complexe in dreapta
         if (nod->drp != NULL && strchr("+-*/", nod->drp->info[0]) != NULL) {
             necesitaParantezeDrp = true;
         }
     }
-
-    // Procesăm partea stângă
+    
+    // Procesam partea stanga
     if (nod->stg != NULL) {
         if (necesitaParantezeStg) *pozitie += sprintf(expresie + *pozitie, "(");
         genereazaExpresie(nod->stg, expresie, pozitie);
         if (necesitaParantezeStg) *pozitie += sprintf(expresie + *pozitie, ")");
     }
-
-    // Adăugăm operatorul
+    
+    // Adaugam operatorul
     if (esteOperator) {
         *pozitie += sprintf(expresie + *pozitie, "%s", nod->info);
-    }
-    else if (!esteFunctie(nod->info)) {
+    } else if (!esteFunctie(nod->info)) {
         *pozitie += sprintf(expresie + *pozitie, "%s", nod->info);
     }
-
-    // Procesăm partea dreaptă
+    
+    // Procesam partea dreapta
     if (nod->drp != NULL && !esteFunctie(nod->info)) {
         if (necesitaParantezeDrp) *pozitie += sprintf(expresie + *pozitie, "(");
         genereazaExpresie(nod->drp, expresie, pozitie);
@@ -1153,38 +1073,12 @@ char* genereazaExpresiaFinala(Nod* nod) {
     return expresie;
 }
 
-void genereazaExpresieS(struct Nod* nod, std::string& expresie, int prioritateParinte) {
-    if (!nod) return;
-
-    // Daca este un operand,Il adaugam direct
-    if (!nod->stg && !nod->drp) {
-        expresie += nod->info;
-        return;
-    }
-
-    int prioritateCurenta = precedenta(nod->info);
-    int necesitaParanteze = prioritateCurenta < prioritateParinte;
-
-    if (necesitaParanteze) expresie += '(';
-
-    // Procesam copilul stâng
-    genereazaExpresieS(nod->stg, expresie, prioritateCurenta);
-
-    // Adaugam operatorul sau functia
-    expresie += nod->info;
-
-    // Procesam copilul drept
-    genereazaExpresieS(nod->drp, expresie, prioritateCurenta);
-
-    if (necesitaParanteze)  expresie += ')';
-}
-
 char* stringToChar(string s) {
     char c[100];
     int i;
     for (i = 0; i < s.size(); i++) {
         c[i] = s[i];
     }
-    c[i] = '\0';
+	c[i] = '\0';
     return c;
 }
